@@ -1,0 +1,8 @@
+{
+  "name": "ios-app-lifecycle",
+  "version": "0.1.0",
+  "description": "End-to-end iOS app development for Claude: plan, design, set up, build SwiftUI, debug on Simulator, test, profile, monetize, ship to TestFlight/App Store, write the store listing, and run the post-launch loop.",
+  "author": { "name": "Tarun", "email": "hello@murmurtts.com" },
+  "license": "MIT",
+  "keywords": ["ios", "swift", "swiftui", "xcode", "testflight", "app-store", "fastlane", "revenuecat", "storekit", "aso"]
+}
