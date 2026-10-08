@@ -1,257 +1,182 @@
-# iOS App Lifecycle — a Claude plugin
+<div align="center">
 
-Plan, build, test, ship and grow an iOS app with Claude. This plugin gives Claude 16 skills that cover the whole lifecycle of an iOS app, and connects it to Xcode, the iOS Simulator, RevenueCat and Mobbin.
+# iOS App Lifecycle — Claude Code & Codex Plugin for iOS Development
 
-It works in **Claude Cowork** (the Claude desktop app) and in **Claude Code** (terminal, IDE or the desktop Code tab).
+**AI agent skills for building, testing, and shipping iOS apps with Swift, SwiftUI and Xcode.**
+Plan → design → build → debug → test → profile → monetize → TestFlight → App Store → post-launch, all in one plugin.
 
-```
- Idea ─▶ Research ─▶ Design ─▶ Setup ─▶ Build ─▶ Debug ─▶ Test ─▶ Perf ─▶ Monetize ─▶ Release ─▶ Store listing ─▶ Post-launch ─┐
-   ▲                                                                                                                         │
-   └──────────────────────────────────────────── next version ◀──────────────────────────────────────────────────────────────┘
-```
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-D97757)](#install-in-claude-code)
+[![Claude Cowork](https://img.shields.io/badge/Claude_Cowork-plugin-D97757)](#install-in-claude-cowork-desktop-app)
+[![Codex compatible](https://img.shields.io/badge/OpenAI_Codex-compatible-black)](#install-in-openai-codex)
+[![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)](https://swift.org)
+[![iOS 17–26](https://img.shields.io/badge/iOS-17%E2%80%9326-000?logo=apple)](https://developer.apple.com/ios/)
+[![Skills](https://img.shields.io/badge/skills-16-success)](docs/skills.md)
+
+[Quick start](#quick-start) · [Skills](docs/skills.md) · [Coming from Codex / Cursor / Copilot?](docs/migrating.md) · [Workflows](docs/workflows.md) · [MCP servers](docs/mcp-servers.md) · [FAQ](docs/faq.md)
+
+</div>
 
 ---
 
-## Contents
+**iOS App Lifecycle** is an open-source plugin that turns **Claude Code**, **Claude Cowork** and **OpenAI Codex** into an iOS engineer for the whole job. It bundles **16 agent skills** (`SKILL.md`) and **4 MCP servers** (XcodeBuildMCP, Xcode MCP bridge, RevenueCat, Mobbin), so your AI coding assistant can:
 
-- [What you get](#what-you-get)
+- 🧭 **Plan** an MVP and a milestone roadmap for a new iPhone or iPad app
+- 🎨 **Turn Figma designs into SwiftUI** and pull UI references from Mobbin
+- 🏗️ **Set up an Xcode project**: xcconfigs, Swift Package Manager, extensions, signing, CI, and a repo `CLAUDE.md`
+- 🧩 **Build SwiftUI screens**: NavigationStack, TabView, sheets, forms, lists, **Liquid Glass** (iOS 26)
+- ⚡ **Add App Intents**: Siri, Shortcuts, Spotlight, widgets, Control Center
+- 🐞 **Build, run and debug on the iOS Simulator**: tap through the UI, read logs, use LLDB
+- ✅ **Write tests**: Swift Testing, XCTest, XCUITest, snapshot tests
+- 🚀 **Fix performance**: SwiftUI rendering audits, ETTrace flame graphs, memory leaks and memgraphs
+- 💰 **Add subscriptions and in-app purchases** with **RevenueCat** or **StoreKit 2**, including paywall compliance
+- 📦 **Ship releases**: version bumps, **fastlane**, `xcodebuild archive`, **TestFlight**, **App Store Connect** submission
+- 🔎 **Write the App Store listing (ASO)**: title, subtitle, keywords, screenshots, privacy labels, and an **App Review guidelines** pre-check
+- 📈 **Run post-launch**: Sentry crash triage, App Store review replies, a weekly app health report, a v1.1 backlog
+
+> Built by an indie iOS developer who moved from Codex to Claude and wanted the whole iOS toolchain to come along.
+
+---
+
+## Table of contents
+
+- [Who is this for](#who-is-this-for)
+- [Quick start](#quick-start)
+  - [Install in Claude Code](#install-in-claude-code)
+  - [Install in Claude Cowork (desktop app)](#install-in-claude-cowork-desktop-app)
+  - [Install in OpenAI Codex](#install-in-openai-codex)
+- [The iOS lifecycle, skill by skill](#the-ios-lifecycle-skill-by-skill)
+- [Coming from Codex, Cursor, Copilot or Xcode AI?](#coming-from-codex-cursor-copilot-or-xcode-ai)
+- [Example prompts](#example-prompts)
 - [Requirements](#requirements)
-- [Install](#install)
-- [Connect the tools](#connect-the-tools)
-- [How to use it](#how-to-use-it)
-- [Skill reference](#skill-reference)
-- [Example workflows](#example-workflows)
-- [Safety model](#safety-model)
-- [Troubleshooting](#troubleshooting)
+- [Safety](#safety)
+- [FAQ](#faq)
 - [Contributing](#contributing)
 - [License and credits](#license-and-credits)
 
 ---
 
-## What you get
+## Who is this for
 
-| Phase | Skill | What Claude does |
-|---|---|---|
-| Any | `ios-lifecycle` | Works out where your app is, then routes the request to the right skill. **Start here.** |
-| Setup | `ios-project-setup` | Sets up the project structure, xcconfigs, SPM, extensions, signing and CI, and writes the repo's `CLAUDE.md` |
-| Build UI | `swiftui-ui-patterns` | Builds navigation, state, lists, sheets, forms and more, with 30+ pattern references |
-| Build UI | `swiftui-liquid-glass` | Adopts and reviews iOS 26+ Liquid Glass |
-| Build UI | `swiftui-view-refactor` | Splits large views and tightens data flow and Observation |
-| System | `ios-app-intents` | Adds App Intents, entities and App Shortcuts for Siri, Spotlight, widgets and controls |
-| Debug | `ios-debugger-agent` | Builds, runs, taps through and reads the logs of your app on the Simulator via XcodeBuildMCP |
-| Test | `ios-testing` | Writes and runs Swift Testing, XCTest and XCUITest tests, and fixes failing ones |
-| Perf | `swiftui-performance-audit` | Audits SwiftUI rendering performance, starting from the code |
-| Perf | `ios-ettrace-performance` | Captures and reads ETTrace flame graphs (launch, scrolling, slow flows) |
-| Perf | `ios-memgraph-leaks` | Captures and diffs memgraphs to find retain cycles and leaks |
-| Monetize | `ios-monetization` | Sets up RevenueCat or StoreKit 2 products, entitlements, paywalls and sandbox testing |
-| Release | `ios-release` | Runs a pre-flight checklist, versioning, archive, TestFlight and App Review submission (fastlane / xcodebuild) |
-| Listing | `app-store-listing` | Writes the name, subtitle, keywords and description within character limits, plans screenshots and privacy labels, and pre-checks App Review guidelines |
-| Post-launch | `ios-crash-monitoring-sentry` | Read-only Sentry queries for crashes and errors |
-| Post-launch | `ios-post-launch` | Weekly health report, crash triage, review reply drafts, next-version backlog |
+- **Indie iOS developers and solo founders** who want one AI agent to take an app from idea to the App Store
+- **Developers moving from OpenAI Codex, Cursor, GitHub Copilot or Windsurf** to Claude Code who need their iOS workflow to carry over
+- **SwiftUI developers** who want current patterns (Observation, Swift 6 concurrency, Liquid Glass) instead of outdated UIKit-era answers
+- **Teams** that want consistent release checklists, App Review pre-flights and crash triage
 
-### MCP servers included
+## Quick start
 
-| Server | Type | Used for |
-|---|---|---|
-| `XcodeBuildMCP` | local (`npx xcodebuildmcp`) | Build, run and test on the Simulator; UI automation; logs |
-| `xcode` | local (`xcrun mcpbridge`) | Xcode's own MCP bridge (Xcode 26.3+) |
-| `revenuecat` | remote HTTP | Products, offerings, entitlements and revenue metrics |
-| `mobbin` | remote HTTP | Real-world app UI references for design research |
+### Install in Claude Code
 
-Figma isn't bundled. Connect the official **Figma** connector (see below) for design-to-code and code-to-design.
+```bash
+/plugin marketplace add tarunyadav1/ios-app-lifecycle
+/plugin install ios-app-lifecycle@ios-app-lifecycle
+```
 
----
+Restart Claude Code. Then, in your Xcode project folder, ask:
+
+```text
+Look at this repo, tell me where the app is in its lifecycle, and set up CLAUDE.md.
+```
+
+### Install in Claude Cowork (desktop app)
+
+1. Download `ios-app-lifecycle.plugin` from the [latest release](https://github.com/tarunyadav1/ios-app-lifecycle/releases/latest), or build it yourself with `./scripts/build-plugin.sh`.
+2. Drag it into a Claude chat (or go to **Customize → Plugins → Upload**) and accept it.
+3. Type `/` to see the skills.
+
+### Install in OpenAI Codex
+
+The skills use the open `SKILL.md` format, so Codex can load them directly:
+
+```bash
+git clone https://github.com/tarunyadav1/ios-app-lifecycle.git
+cp -R ios-app-lifecycle/skills/* ~/.codex/skills/
+```
+
+Then add the MCP servers to `~/.codex/config.toml`. The snippet is in [docs/mcp-servers.md](docs/mcp-servers.md#codex-configtoml). The repo also includes a `.codex-plugin/plugin.json` manifest for Codex plugin tooling. See the [migration guide](docs/migrating.md) for Cursor, Copilot and other agents.
+
+## The iOS lifecycle, skill by skill
+
+| # | Phase | Skill | What the agent does |
+|---|---|---|---|
+| 0 | **Router** | [`ios-lifecycle`](skills/ios-lifecycle/SKILL.md) | Works out where your app is and hands off to the right skill. Plans MVPs and milestones. |
+| 1 | **Project setup** | [`ios-project-setup`](skills/ios-project-setup/SKILL.md) | Xcode project structure, xcconfig environments, SPM, App Groups, signing, GitHub Actions CI, `CLAUDE.md` |
+| 2 | **SwiftUI UI** | [`swiftui-ui-patterns`](skills/swiftui-ui-patterns/SKILL.md) | NavigationStack, TabView, sheets, forms, lists, search, haptics, deep links: 30+ references |
+| 3 | **Liquid Glass** | [`swiftui-liquid-glass`](skills/swiftui-liquid-glass/SKILL.md) | iOS 26 Liquid Glass adoption and review |
+| 4 | **Refactor** | [`swiftui-view-refactor`](skills/swiftui-view-refactor/SKILL.md) | Split large views, `@Observable` ownership, model–view patterns |
+| 5 | **App Intents** | [`ios-app-intents`](skills/ios-app-intents/SKILL.md) | Siri, Shortcuts, Spotlight, widgets, controls, App Shortcuts |
+| 6 | **Debugging** | [`ios-debugger-agent`](skills/ios-debugger-agent/SKILL.md) | Build and run on the Simulator, UI automation, logs, LLDB (XcodeBuildMCP) |
+| 7 | **Testing** | [`ios-testing`](skills/ios-testing/SKILL.md) | Swift Testing, XCTest, XCUITest, snapshot tests, `.xcresult`, CI |
+| 8 | **Performance** | [`swiftui-performance-audit`](skills/swiftui-performance-audit/SKILL.md) | Janky scrolling, expensive body updates, hangs |
+| 9 | **Profiling** | [`ios-ettrace-performance`](skills/ios-ettrace-performance/SKILL.md) | ETTrace flame graphs, launch time, dSYM symbolication |
+| 10 | **Memory** | [`ios-memgraph-leaks`](skills/ios-memgraph-leaks/SKILL.md) | Retain cycles, leaks, memgraph diffing |
+| 11 | **Monetization** | [`ios-monetization`](skills/ios-monetization/SKILL.md) | RevenueCat, StoreKit 2, subscriptions, paywalls, sandbox testing |
+| 12 | **Release** | [`ios-release`](skills/ios-release/SKILL.md) | Pre-flight checklist, fastlane, archive, TestFlight, App Review submission |
+| 13 | **App Store / ASO** | [`app-store-listing`](skills/app-store-listing/SKILL.md) | Title, subtitle, keywords, screenshots, privacy labels, guideline pre-check |
+| 14 | **Crash monitoring** | [`ios-crash-monitoring-sentry`](skills/ios-crash-monitoring-sentry/SKILL.md) | Read-only Sentry issue and event queries |
+| 15 | **Post-launch** | [`ios-post-launch`](skills/ios-post-launch/SKILL.md) | Weekly health report, crash triage, review replies, next-version backlog |
+
+Full details: **[docs/skills.md](docs/skills.md)** · MCP servers: **[docs/mcp-servers.md](docs/mcp-servers.md)**
+
+## Coming from Codex, Cursor, Copilot or Xcode AI?
+
+| You used… | Here you get… |
+|---|---|
+| Codex `build-ios-apps` plugin | All 8 of its skills (MIT), adapted for Claude, **plus** 7 new lifecycle skills |
+| Codex `config.toml` MCP servers | A ready-made `.mcp.json` and a [config.toml → JSON converter table](docs/migrating.md#3-mcp-servers-configtoml--mcpjson) |
+| Codex `AGENTS.md` | `CLAUDE.md`, generated per repo by `ios-project-setup` (keep `AGENTS.md` too; both can coexist) |
+| Codex computer use / in-app browser | XcodeBuildMCP Simulator automation + Claude's own computer use |
+| Cursor rules / Copilot instructions | Skills that load on demand, so no giant rules file |
+| Xcode's built-in AI | Works alongside it through the **Xcode MCP bridge** (`xcrun mcpbridge`) |
+
+➡️ **Step-by-step guide: [docs/migrating.md](docs/migrating.md)**
+
+## Example prompts
+
+```text
+Plan an MVP for a habit-tracking iPhone app and give me a milestone roadmap.
+Build the onboarding screens from this Figma link: https://figma.com/design/...
+Run the app on the iPhone 17 simulator and walk through sign-up. Report anything broken.
+The feed scrolls janky on older devices. Find out why and fix it.
+Add a monthly and an annual subscription with a 7-day free trial using RevenueCat.
+Set up fastlane and push a TestFlight build. Show me the command before running it.
+Write my App Store title, subtitle and keywords, and check the app against App Review guidelines.
+Weekly health check: crashes, reviews, revenue. Then draft replies to the 1–3★ reviews.
+```
+
+More end-to-end recipes: **[docs/workflows.md](docs/workflows.md)**
 
 ## Requirements
 
-- macOS with **Xcode** installed (`xcode-select -p` should print a path)
-- **Node.js 18+** (for `npx xcodebuildmcp`)
-- Optional: **fastlane** (`brew install fastlane` or a project `Gemfile`), **Ruby/Bundler**
-- Optional accounts: Apple Developer Program, RevenueCat, Mobbin, Sentry, Figma
+- macOS with **Xcode 16+** (Xcode 26 recommended for Liquid Glass and the Xcode MCP bridge)
+- **Node.js 18+** for XcodeBuildMCP (`npx`)
+- Optional: **fastlane**, an Apple Developer Program account, RevenueCat, Sentry, Figma, Mobbin
 
-> **Cowork note:** Cowork's built-in shell is a Linux sandbox, so it cannot run `xcodebuild` itself. Xcode work goes through the local MCP servers above, which run on your Mac. For long build, test and release sessions, Claude Code on your Mac is the smoothest option.
+## Safety
 
----
+- **Nothing irreversible happens without your OK.** Uploads, App Review submissions, price changes and review replies are always shown to you first.
+- **No secrets in chat or git.** Certificates, `.p8` keys and tokens stay in your keychain or environment variables.
+- **Read-only monitoring.** The Sentry skill never writes.
 
-## Install
+## FAQ
 
-### Claude Code
+**Is this an official Apple, Anthropic or OpenAI project?** No. It's an independent open-source project.
 
-```bash
-# 1. Add this repo as a plugin marketplace
-/plugin marketplace add <github-user>/ios-app-lifecycle
+**Does it work with UIKit?** Yes. The debugging, testing, profiling, release, ASO and monetization skills don't care which UI framework you use; the UI skills focus on SwiftUI.
 
-# 2. Install the plugin
-/plugin install ios-app-lifecycle@ios-app-lifecycle
+**Does it work with React Native, Expo or Flutter?** The release, App Store, monetization and post-launch skills apply. The SwiftUI skills don't.
 
-# 3. Restart Claude Code, then check that the skills are loaded
-/plugin
-```
+**Can I use only some of the skills?** Yes. Copy any folder from `skills/` into your agent's skills directory.
 
-Or clone it and point Claude Code at the folder:
-
-```bash
-git clone https://github.com/<github-user>/ios-app-lifecycle.git
-/plugin marketplace add ./ios-app-lifecycle
-/plugin install ios-app-lifecycle@ios-app-lifecycle
-```
-
-### Claude Cowork (desktop app)
-
-1. Download the latest `ios-app-lifecycle.plugin` from [Releases](../../releases), or build it yourself:
-   ```bash
-   git clone https://github.com/<github-user>/ios-app-lifecycle.git
-   cd ios-app-lifecycle && zip -r ../ios-app-lifecycle.plugin . -x ".git/*" "*.DS_Store"
-   ```
-2. In the Claude desktop app, open **Customize → Plugins → Upload plugin** (or drag the `.plugin` file into a chat) and accept it.
-3. Type `/` in a new task. The skills appear under **iOS App Lifecycle**.
-
----
-
-## Connect the tools
-
-| Tool | How |
-|---|---|
-| **Figma** | Claude → Settings → Connectors → **Figma** → Connect. Optionally install the official Figma plugin for its `figma-swiftui` skill. |
-| **RevenueCat** | Comes with the plugin. On first use you'll be asked to sign in (OAuth). |
-| **Mobbin** | Comes with the plugin. Sign in when prompted (needs a Mobbin account). |
-| **XcodeBuildMCP** | Comes with the plugin. First run downloads it via `npx`. Allow Terminal / Claude to control the Simulator if macOS asks. |
-| **Xcode MCP bridge** | Needs a recent Xcode with `xcrun mcpbridge`. If your Xcode doesn't have it, delete the `xcode` entry from `.mcp.json`. |
-| **Sentry** | Create a read-only auth token (`project:read`, `event:read`, `org:read`) and export `SENTRY_AUTH_TOKEN`, `SENTRY_ORG` and `SENTRY_PROJECT` in your shell profile. Never paste tokens into chat. |
-| **App Store Connect (fastlane)** | Create an App Store Connect API key, then export `APP_STORE_CONNECT_API_KEY_KEY_ID`, `APP_STORE_CONNECT_API_KEY_ISSUER_ID` and `APP_STORE_CONNECT_API_KEY_KEY` (or the key file path) for fastlane. |
-| **Linear** (optional) | Claude → Settings → Connectors → Linear, so `ios-post-launch` can file the next-version backlog. |
-
----
-
-## How to use it
-
-You don't need to remember skill names. Describe what you want, and `ios-lifecycle` routes the request to the right skill. You can also call a skill directly with `/skill-name`.
-
-Good first prompts:
-
-- *"Look at this repo and tell me where the app is in its lifecycle and what to do next."*
-- *"Set up CLAUDE.md for this project."* → `ios-project-setup`
-- *"Build the settings screen from this Figma link: …"* → Figma + `swiftui-ui-patterns`
-- *"Run the app on the simulator and walk through onboarding."* → `ios-debugger-agent`
-- *"Scrolling the feed is janky, find out why."* → `swiftui-performance-audit` → `ios-ettrace-performance`
-- *"Add a monthly and an annual subscription with a 7-day trial using RevenueCat."* → `ios-monetization`
-- *"Ship a TestFlight build."* → `ios-release`
-- *"Write my App Store listing and check it against review guidelines."* → `app-store-listing`
-- *"Weekly health check."* → `ios-post-launch`
-
-**Tip:** run `ios-project-setup` once per repo. The `CLAUDE.md` it writes (build commands, schemes, simulator, conventions) makes every later session faster and more accurate.
-
----
-
-## Skill reference
-
-Each skill lives in `skills/<name>/SKILL.md`, with optional `references/` (loaded on demand) and `scripts/`.
-
-<details>
-<summary><b>ios-lifecycle</b> — router and planner</summary>
-
-Orients on the repo (project type, version, fastlane, StoreKit/RevenueCat), maps the request to one of 13 phases, and loads the matching skills. For new apps it writes a product brief, an MVP screen inventory, stack defaults, risks and a milestone plan.
-</details>
-
-<details>
-<summary><b>ios-project-setup</b></summary>
-
-Folder layout, Swift 6 strict concurrency, xcconfigs per environment, a git-ignored secrets xcconfig, `PrivacyInfo.xcprivacy`, extension targets with App Groups, signing guidance, the repo `CLAUDE.md` template, and an optional GitHub Actions CI workflow.
-</details>
-
-<details>
-<summary><b>ios-testing</b></summary>
-
-Picks Swift Testing, XCTest, XCUITest, snapshot or performance tests depending on the job; covers testable-code patterns, running single tests, reading `.xcresult`, release-time test runs, and CI result bundles.
-</details>
-
-<details>
-<summary><b>ios-release</b></summary>
-
-An executed pre-flight checklist (version/build, Release config, privacy manifest, encryption flag, entitlements, account deletion, paywall rules), fastlane lanes or `xcodebuild archive/export`, TestFlight notes, App Review submission with phased release, git tagging, fastlane bootstrap, and rejection handling. It always asks before uploading or submitting.
-</details>
-
-<details>
-<summary><b>app-store-listing</b></summary>
-
-Metadata with enforced limits (name 30, subtitle 30, keywords 100 bytes, promo 170, description 4,000), a screenshot plan with Simulator status-bar overrides, privacy nutrition labels derived from the code, age rating, and a guideline pre-flight (2.1, 2.3, 3.1.x, 4.2, 4.8, 5.1.x). It can write `fastlane/metadata/<locale>/`.
-</details>
-
-<details>
-<summary><b>ios-monetization</b></summary>
-
-Choosing RevenueCat or StoreKit 2, catalog modeling (products, entitlements, offerings), a single observable entitlement store, paywall compliance, StoreKit config, Sandbox and TestFlight test matrices, and post-launch experiments.
-</details>
-
-<details>
-<summary><b>ios-post-launch</b></summary>
-
-A weekly health report (stability, performance, revenue, reviews, funnel), symbolicated crash triage that ends in a test and a fix, review reply drafts, ratings prompt guidance, and a prioritized next-version backlog (optionally filed in Linear).
-</details>
-
-<details>
-<summary><b>Adapted skills</b> (from OpenAI's open-source <code>build-ios-apps</code> and <code>sentry</code> plugins)</summary>
-
-`swiftui-ui-patterns`, `swiftui-liquid-glass`, `swiftui-view-refactor`, `swiftui-performance-audit`, `ios-app-intents`, `ios-debugger-agent`, `ios-ettrace-performance`, `ios-memgraph-leaks`, `ios-crash-monitoring-sentry`. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-</details>
-
----
-
-## Example workflows
-
-**From zero to TestFlight**
-
-1. *"I want to build an app that … — plan the MVP."* (`ios-lifecycle`)
-2. *"Find 5 onboarding flows on Mobbin for apps like this."* (Mobbin)
-3. *"Create the project and CLAUDE.md."* (`ios-project-setup`)
-4. *"Build these screens from the Figma file."* (Figma + `swiftui-ui-patterns`)
-5. *"Run it on the simulator and fix anything broken."* (`ios-debugger-agent`)
-6. *"Add tests for the core model and the onboarding UI flow."* (`ios-testing`)
-7. *"Set up fastlane and push a TestFlight build."* (`ios-release`)
-
-**Release day**
-
-*"Prepare 1.2.0: run the pre-flight, write What's New from the commits, update the listing, and show me the exact fastlane command before running it."*
-
-**Monday morning**
-
-*"Weekly health check for the app, then draft replies to the new 1–3 star reviews."*
-
----
-
-## Safety model
-
-- **Irreversible actions need your OK.** Uploading builds, submitting for review, changing RevenueCat products or prices, and posting review replies are always shown to you first. Claude drafts and waits for your go-ahead.
-- **No secrets in chat or in the repo.** Certificates, `.p8` keys, passwords and tokens stay in your keychain or environment variables. The skills refer to them only by environment variable name.
-- **Read-only monitoring.** The Sentry skill only reads.
-
----
-
-## Troubleshooting
-
-| Symptom | Fix |
-|---|---|
-| `XcodeBuildMCP` tools don't appear | Check that `node -v` is 18 or later, then restart Claude. Run `npx -y xcodebuildmcp@latest --help` once in Terminal to pre-download it. |
-| `xcrun: error: unable to find utility "mcpbridge"` | Your Xcode version doesn't include the bridge. Update Xcode, or remove the `xcode` server from `.mcp.json`. |
-| "No booted simulator" | Boot one first: `xcrun simctl boot "iPhone 17"` (use a name from `xcrun simctl list devices available`). |
-| fastlane can't authenticate | Check the App Store Connect API key environment variables, and that the key has the App Manager role. |
-| Tool names look like `mcp__plugin_..._XcodeBuildMCP__...` | That's normal: plugin MCP tools get a prefix. Skills refer to the tools by their base names. |
-| Cowork says it can't run `xcodebuild` | That's expected. Use the MCP tools, or run the session in Claude Code on your Mac. |
-
----
+More answers: **[docs/faq.md](docs/faq.md)**
 
 ## Contributing
 
-1. Fork the repo and create a branch.
-2. Add or edit a skill under `skills/<kebab-case-name>/SKILL.md`. Keep the body under about 3,000 words and put longer material in `references/`.
-3. Write the frontmatter `description` in the third person, with real trigger phrases.
-4. Test locally: `/plugin marketplace add ./ios-app-lifecycle` → `/plugin install ios-app-lifecycle@ios-app-lifecycle`.
-5. Open a PR that describes what the skill does and when it should trigger.
-
----
+PRs welcome: new skills, better references, bug fixes. See [CONTRIBUTING.md](CONTRIBUTING.md). If this saved you time, please ⭐ the repo so other iOS developers can find it.
 
 ## License and credits
 
-MIT © 2026 Tarun. Includes skills adapted from [openai/plugins](https://github.com/openai/plugins) (MIT and Apache-2.0). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+MIT © 2026 [Tarun](https://github.com/tarunyadav1). Includes skills adapted from [openai/plugins](https://github.com/openai/plugins) (MIT / Apache-2.0). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Not affiliated with Apple, Anthropic, OpenAI, RevenueCat, Sentry, Figma or Mobbin. All trademarks belong to their owners.
 
-Not affiliated with Apple, OpenAI, RevenueCat, Mobbin, Sentry or Figma. All trademarks belong to their owners.
+<sub>**Keywords:** Claude Code plugin, Claude Code skills, Claude Cowork plugin, Codex plugin, Codex skills, AGENTS.md, CLAUDE.md, MCP server, XcodeBuildMCP, Xcode MCP, iOS development, iOS app development, Swift, SwiftUI, Swift 6, Xcode, iOS Simulator, Liquid Glass, iOS 26, App Intents, Siri Shortcuts, WidgetKit, Swift Testing, XCTest, XCUITest, Instruments, ETTrace, memory leaks, fastlane, TestFlight, App Store Connect, App Store submission, App Review guidelines, ASO, App Store Optimization, app screenshots, privacy manifest, RevenueCat, StoreKit 2, in-app purchases, subscriptions, paywall, Sentry, crash reporting, Figma to SwiftUI, Mobbin, AI coding agent, AI pair programmer, indie iOS developer, vibe coding iOS app.</sub>

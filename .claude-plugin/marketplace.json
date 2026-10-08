@@ -5,14 +5,33 @@
     "email": "hello@murmurtts.com"
   },
   "metadata": {
-    "description": "iOS app development lifecycle plugin for Claude Code and Claude Cowork."
+    "description": "iOS app development plugin for Claude Code and Claude Cowork \u2014 Swift, SwiftUI, Xcode, Simulator, testing, TestFlight, App Store, RevenueCat."
   },
   "plugins": [
     {
       "name": "ios-app-lifecycle",
       "source": "./",
-      "description": "End-to-end iOS app development lifecycle skills + Xcode, XcodeBuildMCP, RevenueCat and Mobbin MCP servers.",
-      "version": "0.1.0"
+      "description": "Claude Code, Claude Cowork & Codex plugin for iOS development: 16 agent skills + XcodeBuildMCP, Xcode MCP, RevenueCat & Mobbin MCP servers. Plan, build SwiftUI, debug on Simulator, test, profile, add subscriptions, ship to TestFlight & the App Store, ASO, and post-launch.",
+      "version": "0.2.0",
+      "homepage": "https://github.com/tarunyadav1/ios-app-lifecycle",
+      "keywords": [
+        "claude-code",
+        "claude-code-plugin",
+        "claude-skills",
+        "codex",
+        "codex-skills",
+        "mcp",
+        "xcodebuildmcp",
+        "ios",
+        "ios-development",
+        "swift",
+        "swiftui",
+        "xcode",
+        "ios-simulator",
+        "liquid-glass",
+        "app-intents"
+      ],
+      "category": "development"
     }
   ]
 }

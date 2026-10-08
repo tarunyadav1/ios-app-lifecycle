@@ -4,9 +4,10 @@
   "description": "Claude Code, Claude Cowork & Codex plugin for iOS development: 16 agent skills + XcodeBuildMCP, Xcode MCP, RevenueCat & Mobbin MCP servers. Plan, build SwiftUI, debug on Simulator, test, profile, add subscriptions, ship to TestFlight & the App Store, ASO, and post-launch.",
   "author": {
     "name": "Tarun",
-    "email": "hello@murmurtts.com",
     "url": "https://github.com/tarunyadav1"
   },
+  "homepage": "https://github.com/tarunyadav1/ios-app-lifecycle",
+  "repository": "https://github.com/tarunyadav1/ios-app-lifecycle",
   "license": "MIT",
   "keywords": [
     "claude-code",
@@ -41,6 +42,14 @@
     "ai-agent",
     "indie-dev"
   ],
-  "homepage": "https://github.com/tarunyadav1/ios-app-lifecycle",
-  "repository": "https://github.com/tarunyadav1/ios-app-lifecycle"
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "iOS App Lifecycle",
+    "shortDescription": "Plan, build, test and ship iOS apps end to end",
+    "category": "Developer Tools",
+    "defaultPrompt": [
+      "Look at this iOS repo and tell me what to do next."
+    ]
+  }
 }
